@@ -1,0 +1,58 @@
+---
+title: "lab9_part2"
+author: "Eli Schulman"
+date: "11/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(here)
+library(janitor)
+library(broom)
+```
+
+```{r}
+lizards <- read_csv(here("data", "lizards.csv"))
+```
+
+Get counts of lizards by species 
+```{r}
+lizards %>% 
+  count(spp) %>% 
+  arrange(-n)
+```
+
+Make a subset:
+```{r}
+utst <- lizards %>% 
+  filter(spp == "UTST",
+         site %in% c("IBPE", "RABB", "EAST"),
+         tail %in% c("W", "B"))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

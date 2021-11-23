@@ -1,0 +1,195 @@
+---
+title: "coding with base R"
+author: "Eli Schulman"
+date: "11/22/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Coding with base R
+
+Vectors
+
+```{r}
+# create a numeric vector with default values (0)
+my_vector <- vector(mode = "numeric", length = 100)
+
+# default for logical is "False"
+my_second_vector <- vector(mode = "logical", length = 10)
+
+my_vector
+my_second_vector
+```
+
+```{r}
+# show length, class
+
+length(my_vector)
+class(my_second_vector)
+```
+
+identifying numbers in a vector
+
+```{r}
+vector_1 <- c(1:50)
+
+vector_1[5]
+vector_1[10:20]
+vector_1[-3]
+```
+
+Create a Matrix
+```{r}
+matrix_1 <- matrix(data = 1:100, nrow = 5, ncol = 20)
+
+matrix_1
+```
+
+```{r}
+# use dim() to return number or rows and number of columns
+dim(matrix_1)
+
+class(matrix_1)
+```
+
+Indexing
+
+```{r}
+#specify just a row or just a column to retried that whole list 
+matrix_1[1, ]
+
+#specify row and column to return value
+matrix_1[2,3]
+
+# Index and replace
+matrix_1[1, 5] <- 1000000
+
+matrix_1
+```
+
+For Loops
+```{r}
+for (i in 1:10){
+  print(i)
+}
+
+```
+
+Generating Random Numbers
+```{r}
+# use rnorm to pull random numbers from a theoretical normal dist.
+rnorm(n = 5, mean = 10, sd = 2)
+```
+
+Combing everything to do the following:
+- use 'numeric' to create empty vector
+- use 'for' to iterate through 
+- use '[ ]' to access each spot and do something 
+- use 'rnorm' to generate a random number for that spot
+
+$$N_{t}=N_{t-1} + r\left(1 - \frac{N_{t-1}}{K}\right)$$
+$$
+r \sin norm(\mu = 1.5, \sigma = 0.8)
+$$
+
+Creating the model with specified parameters
+Model 1
+```{r}
+# setup model parameters
+
+K <- 100
+nsteps <- 100
+mu <- 1.5
+sigma <- 0.8
+
+# setup model objects
+
+N = vector(mode = "numeric", length = nsteps)
+# assign starting value of 25 (would be 0 otherwise)
+N[1] = 25
+
+#Model it starting at point 2 since we already gave a value for point 1
+for (t in 2:nsteps){
+  r <- rnorm(n = 1, mean = mu, sd = sigma)
+  N[t] <-  N[t-1] + r + (1 - N[t - 1] / K)
+}
+
+# visualize with a plot
+
+plot(N)
+```
+Model 2
+```{r}
+# setup model parameters
+
+K <- 100
+nsteps <- 100
+mu <- .4
+sigma <- 1.5
+
+# setup model objects
+
+N = vector(mode = "numeric", length = nsteps)
+# assign starting value of 25 (would be 0 otherwise)
+N[1] = 25
+
+#Model it starting at point 2 since we already gave a value for point 1
+for (t in 2:nsteps){
+  r <- rnorm(n = 1, mean = mu, sd = sigma)
+  N[t] <-  N[t-1] + r + (1 - N[t - 1] / K)
+}
+
+# visualize with a plot
+
+plot(N)
+```
+ Model 3 (Using a matrix)
+ 
+```{r}
+# setup model parameters
+
+K <- 50
+nsteps <- 50
+mu <- .4
+sigma <- 2
+
+# setup model objects
+
+N = matrix(data = NA, nrow = nsteps, ncol = 100)
+# assign starting value of 25 (would be 0 otherwise)
+N[1, ] = 25
+
+#Model it starting at point 2 since we already gave a value for point 1
+for (t in 2:nsteps){
+  r <- rnorm(n = 100, mean = mu, sd = sigma)
+  N[t,] <-  N[t-1] + r + (1 - N[t - 1,] / K)
+}
+
+# visualize with a plot
+
+matplot(N, type = "l")
+```
+ 
+Now use tidyverse
+```{r}
+library(tidyverse)
+
+# create df
+my_data <- as_tibble(N) %>% 
+  mutate(time = 1:nsteps) %>% 
+  gather(run, N, -time)
+
+# visualize it 
+ggplot(my_data, aes(x = time, y = N)) +
+  geom_line(aes(group = run), size = .1) +
+  stat_summaryd(geom = "line", fun = mean, color = "red")
+```
+
+
+
+
+
+
